@@ -3,3 +3,6 @@
 .idea
 .metals
 target
+project/metals.sbt
+project/project.sbt
+project/project/project.sbt
