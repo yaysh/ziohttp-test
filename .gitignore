@@ -4,5 +4,5 @@
 .metals
 target
 project/metals.sbt
-project/project.sbt
-project/project/project.sbt
+project/project/metals.sbt
+project/project/project/project.sbt
