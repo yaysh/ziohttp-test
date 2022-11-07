@@ -4,8 +4,8 @@ import java.util.UUID
 import models._
 import collection.mutable.Map
 import zio._
-import zio.ZLayer.FunctionConstructor.WithOut
 
+// TODO: Add some kind of Repo trait here so I can test easily without containers
 final case class UserServiceLive() extends UserService {
 
   val uuid = UUID.randomUUID()

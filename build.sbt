@@ -6,6 +6,7 @@ val slf4jVersion = "1.7.36"
 val zioLoggingVersion = "2.1.1"
 ThisBuild / version := "0.1.0-SNAPSHOT"
 ThisBuild / scalaVersion := "3.1.3"
+ThisBuild / semanticdbEnabled := true
 
 lazy val root = (project in file("."))
   .settings(
@@ -25,5 +26,7 @@ lazy val root = (project in file("."))
       "io.getquill" %% "quill-jdbc-zio" % zioQuillVersion,
       "org.postgresql" % "postgresql" % "42.3.1"
     ),
+    Test / fork := true,
     testFrameworks := Seq(new TestFramework("zio.test.sbt.ZTestFramework"))
   )
+  .enablePlugins(JavaAppPackaging)
