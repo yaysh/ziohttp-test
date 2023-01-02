@@ -1,9 +1,11 @@
-val zioQuillVersion = "4.3.0"
-val zioVersion = "2.0.2" // "2.0.0-RC6"
+import com.typesafe.sbt.packager.docker.DockerPlugin
+
+val zioQuillVersion = "4.6.0"
+val zioVersion = "2.0.5" // "2.0.0-RC6"
 val zioHttpVersion = "2.0.0-RC11" // "2.0.0-RC9"
-val zioJsonVersion = "0.3.0"
-val slf4jVersion = "1.7.36"
-val zioLoggingVersion = "2.1.1"
+val zioJsonVersion = "0.4.2"
+val slf4jVersion = "2.0.5"
+val zioLoggingVersion = "2.1.6"
 ThisBuild / version := "0.1.0-SNAPSHOT"
 ThisBuild / scalaVersion := "3.1.3"
 ThisBuild / semanticdbEnabled := true
@@ -22,11 +24,12 @@ lazy val root = (project in file("."))
       "org.slf4j" % "slf4j-api" % slf4jVersion,
       "org.slf4j" % "slf4j-simple" % slf4jVersion,
       /* "io.d11" %% "zhttp-test" % zioHttpVersion % Test, */
-      "com.github.jwt-scala" %% "jwt-zio-json" % "9.1.0",
+      "com.github.jwt-scala" %% "jwt-zio-json" % "9.1.2",
       "io.getquill" %% "quill-jdbc-zio" % zioQuillVersion,
-      "org.postgresql" % "postgresql" % "42.3.1"
+      "org.postgresql" % "postgresql" % "42.5.1",
+      "io.github.scottweaver" %% "zio-2-0-testcontainers-postgresql" % "0.9.0",
     ),
     Test / fork := true,
     testFrameworks := Seq(new TestFramework("zio.test.sbt.ZTestFramework"))
   )
-  .enablePlugins(JavaAppPackaging)
+  .enablePlugins(DockerPlugin)
