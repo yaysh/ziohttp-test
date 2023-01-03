@@ -7,15 +7,21 @@ import zio.Scope
 
 object UserServiceSpec extends ZIOSpecDefault {
 
-  override def spec = {
+  override def spec: Spec[TestEnvironment, Throwable] = {
     suite("UserServiceSpec")(
-      test("add user creates valid uuid") {
-        val userService = UserServiceLive()
+      suite("added owner does not exist in db")(
         for {
-          newUser <- userService.addUser(CreateUser("hello"))
-        } yield assertTrue(newUser._1.toString.nonEmpty)
-      }
-    ).provideLayer(UserServiceLive.layer)
+          owner <- UserServiceLive.create
+        }
+      )
+    ) @@ DbMigrationAspect.migrateOnce()() @@ TestAspect.withLiveRandom
   }
-
+    .provideShared(
+      UserServiceLive.layer,
+      ZPostgresSQLContainer.Settings.default,
+      ZPostgresSQLContainer.live,
+      TestContainerLayers.dataSourceLayer,
+      Live.default,
+      ZENv.live
+    )
 }

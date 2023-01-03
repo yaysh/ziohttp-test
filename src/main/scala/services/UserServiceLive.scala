@@ -1,26 +1,28 @@
 package services
 
+import io.getquill.query
+
 import java.util.UUID
-import models._
+import models.*
+
 import collection.mutable.Map
-import zio._
+import zio.*
 
-// TODO: Add some kind of Repo trait here so I can test easily without containers
-final case class UserServiceLive() extends UserService {
+import javax.sql.DataSource
 
-  val uuid = UUID.randomUUID()
-  val user = User(uuid, "jens madsen")
+final case class UserServiceLive(dataSource: DataSource) extends UserService {
 
-  val userMap: scala.collection.mutable.Map[UUID, User] = Map(user.id -> user)
+  import repositories.QuillContext._
 
-  override def getAll: ZIO[Any, Throwable, List[User]] =
-    ZIO.succeed(userMap.values.toList)
+  override def getAll: Task[List[User]] =
+    run(query[User]).provideEnvironment(Zenvironment(dataSource))
 
   override def addUser(user: CreateUser): ZIO[Any, Throwable, User] = {
-    val newUuid = UUID.randomUUID()
-    val newUser = User(newUuid, user.name)
-    userMap.put(newUuid, newUser)
-    ZIO.succeed(newUser)
+    for {
+      uuid <- UUID.randomUUID()
+      user <- User.make(uuid, user.name)
+      _ <- run(query[User].insertValue(lift(user))).provideEnvironment(ZEnvironment(dataSource))
+    } yield user
   }
 
   override def get(id: UUID) =
